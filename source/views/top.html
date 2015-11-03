@@ -1,4 +1,4 @@
-<div>
+<div ui-view>
 	<p><a ui-sref="new_activities()">Upload FIT file</a></p>
 	<div ng-show="!activities" style="text-align: center; font-size: 25rem">
 		<i class="fa fa-spinner fa-spin"></i>
@@ -16,7 +16,7 @@
 	          </tr>
 	      </thead>
 	      <tbody infinite-scroll on-scroll="getActivities" per-page="20">
-	          <tr ng-repeat="activity in activities">
+	          <tr ng-repeat="activity in activities" ui-sref="show_activities({id: activity.id})" class="sg-selectable">
 	            <td>{{activity.type}}</td>
 	            <td>{{activity.start_date | date: 'MM/dd/yyyy'}}</td>
 	            <td>{{activity.name}}</td>

@@ -1,0 +1,7 @@
+.sg-selectable{
+	cursor: pointer;
+	&:hover{
+		background-color: #fcf8e3 !important;
+		opacity: 0.8;
+	}
+}

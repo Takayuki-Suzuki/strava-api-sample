@@ -51,4 +51,31 @@
 			}
 		};
 	}])
+	.controller('ShowActivitiesCtrl', ['$scope', '$http', '$state', '$q', 'Util', 'activities', function($scope, $http, $state, $q, Util, activities){
+		$scope.activities = activities.data;
+		$scope.params = $state.params;
+
+		$scope.getActivities = function(per_page){
+			var defer = $q.defer();
+			$http.get('/activities?page=' + $scope.page + '&per_page=' + per_page)
+			.success(function(activities){
+				$scope.activities = _.uniq(_.union($scope.activities, activities));
+				$scope.page++;
+				defer.resolve(activities.length < per_page);
+			})
+			.error(function(data, status){
+				Util.addAlert('Error!' + data.error, 'danger');
+				defer.reject();
+			});
+			return defer.promise;
+		};
+
+		$http.get('/activities/' + $state.params.id)
+		.success(function(data, status){
+			$scope.activity = data;
+		})
+		.error(function(data, status){
+			Util.addAlert('Error!' + data.error, 'danger');
+		});
+	}])
 })();

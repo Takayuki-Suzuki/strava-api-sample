@@ -59,23 +59,18 @@
 				}
 			}
 		})
-		// .state('activities', {
-		// 	parent: 'root',
-		// 	url: '/',
-		// 	templateUrl: 'views/activites/new.html',
-		// 	controller: 'NewActivitiesCtrl',
-		// 	requireLogin: true,
-		// 	resolve: {
-		// 		activities: function($http){
-		// 			return $http.get('/activities');
-		// 		}
-		// 	}
-		// });
 		.state('new_activities', {
 			parent: 'root',
 			url: '/new_activities',
 			templateUrl: 'views/activities/new.html',
 			controller: 'NewActivitiesCtrl',
+			requireLogin: true
+		})
+		.state('show_activities', {
+			parent: 'top',
+			url: 'activities/:id',
+			templateUrl: 'views/activities/show.html',
+			controller: 'ShowActivitiesCtrl',
 			requireLogin: true
 		});
 		$locationProvider.html5Mode(true);
@@ -83,6 +78,7 @@
 
 	.run(['$rootScope', '$location', '$state', '$urlRouter', 'Auth', function ($rootScope, $location, $state, $urlRouter, Auth) {
 		$rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams){
+			//console.log(toState);
 			Auth.isLoggedInAsync(function(isLoggedIn){
         		if(toState.requireLogin && !isLoggedIn){
 	        		e.preventDefault();

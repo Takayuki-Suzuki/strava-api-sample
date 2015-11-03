@@ -1,0 +1,9 @@
+<div>
+	<div class="list-group col-sm-3" infinite-scroll on-scroll="getActivities" per-page="20">
+		<a ng-repeat="activity in activities" ui-sref="show_activities({id: activity.id})" class="list-group-item" ng-class="{'list-group-item-warning': params.id == activity.id}">{{activity.name}}</a>
+	</div>
+	<div class="col-sm-9">
+		<img src="http://maps.google.com/maps/api/staticmap?sensor=false&size=640x640&maptype=roadmap&path=color:0x0000ffFF%7Cweight:5%7Cenc:{{activity.map.polyline}}">
+		{{activity}}
+	</div>
+</div>
