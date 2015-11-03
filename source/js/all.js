@@ -73,7 +73,7 @@
 			controller: 'ShowActivitiesCtrl',
 			requireLogin: true
 		});
-		$locationProvider.html5Mode(true);
+		// $locationProvider.html5Mode(true);
 	}])
 
 	.run(['$rootScope', '$location', '$state', '$urlRouter', 'Auth', function ($rootScope, $location, $state, $urlRouter, Auth) {

@@ -3,7 +3,28 @@
 		<a ng-repeat="activity in activities" ui-sref="show_activities({id: activity.id})" class="list-group-item" ng-class="{'list-group-item-warning': params.id == activity.id}">{{activity.name}}</a>
 	</div>
 	<div class="col-sm-9">
-		<img src="http://maps.google.com/maps/api/staticmap?sensor=false&size=640x640&maptype=roadmap&path=color:0x0000ffFF%7Cweight:5%7Cenc:{{activity.map.polyline}}">
-		{{activity}}
+		<ul class="sg-list-horizontal text-center">
+			<li class="col-sm-3">
+				<p class="sg-lead">{{activity.distance / 1000 | number: 2}}</p>
+				<p class="sg-weak">KM</p>
+			</li>
+			<li class="col-sm-3">
+				<p class="sg-lead">{{activity.elapsed_time | time}}</p>
+				<p class="sg-weak">TIME</p>
+			</li>
+			<li class="col-sm-3">
+				<p class="sg-lead">{{1 / (activity.average_speed * 60 / 1000) | number: 2}}</p>
+				<p class="sg-weak">MIN/KM</p>
+			</li>
+			<li class="col-sm-3">
+				<p class="sg-lead">{{activity.calories}}</p>
+				<p class="sg-weak">KCal</p>
+			</li>
+		</ul>
+		{{activityLaps}}
+		<p class="text-center">
+			<img src="http://maps.google.com/maps/api/staticmap?sensor=false&size=640x640&maptype=roadmap&path=color:0x0000ffFF%7Cweight:5%7Cenc:{{activity.map.polyline}}">
+		</p>
+		
 	</div>
 </div>

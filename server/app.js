@@ -115,6 +115,30 @@ app.get('/activities/:id', function(req, res, next){
 		.json(JSON.parse(response.body));
 	});
 });
+app.get('/activities/:id/zones', function(req, res, next){
+	var options = {
+		uri: 'https://www.strava.com/api/v3/activities/' + req.params.id + '/zones',
+		headers: {
+			'Authorization': 'Bearer ' + req.session.access_token
+		}
+	};
+	request.get(options, function(error, response, body){
+		res.status(response.statusCode)
+		.json(JSON.parse(response.body));
+	});
+});
+app.get('/activities/:id/laps', function(req, res, next){
+	var options = {
+		uri: 'https://www.strava.com/api/v3/activities/' + req.params.id + '/laps',
+		headers: {
+			'Authorization': 'Bearer ' + req.session.access_token
+		}
+	};
+	request.get(options, function(error, response, body){
+		res.status(response.statusCode)
+		.json(JSON.parse(response.body));
+	});
+});
 app.post('/uploads', upload.fields([{name: 'fit'}, {name: 'activity_type'}]), function(req, res, next){
 	var options = {
 		uri: 'https://www.strava.com/api/v3/uploads',

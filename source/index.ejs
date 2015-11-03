@@ -48,7 +48,9 @@
           <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav navbar-right">
                   <li class="dropdown" ng-show="isLoggedIn()">
-                      <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i> 
+                      <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+                        <img src="{{getCurrentUser().profile_medium}}" class="sg-img-circle" width="25" height="25"> 
+                     <!--    <i class="glyphicon glyphicon-user"></i>  -->
                         {{getCurrentUser().firstname}}
                         {{getCurrentUser().lastname}} 
                         さん <span class="caret"></span></a>

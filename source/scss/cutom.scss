@@ -1,7 +1,20 @@
+ul{
+	list-style: none;
+}
 .sg-selectable{
 	cursor: pointer;
 	&:hover{
 		background-color: #fcf8e3 !important;
 		opacity: 0.8;
 	}
+}
+.sg-img-circle{
+	border-radius: 50%;
+}
+.sg-lead{
+	font-size: 3rem;
+}
+.sg-weak{
+	font-size: 1rem;
+	color: #999999;
 }

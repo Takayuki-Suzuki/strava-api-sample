@@ -77,5 +77,13 @@
 		.error(function(data, status){
 			Util.addAlert('Error!' + data.error, 'danger');
 		});
+
+		$http.get('/activities/' + $state.params.id + '/laps')
+		.success(function(data, status){
+			$scope.activityLaps = data;
+		})
+		.error(function(data, status){
+			Util.addAlert('Error!' + data.error, 'danger');
+		});
 	}])
 })();
