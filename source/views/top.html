@@ -1,2 +1,30 @@
-{{SETTINGS}}{{test}}
-aaa
+<div>
+	<p><a ui-sref="new_activities()">Upload FIT file</a></p>
+	<div ng-show="!activities" style="text-align: center; font-size: 25rem">
+		<i class="fa fa-spinner fa-spin"></i>
+	</div>
+	<div class="table-responsive" ng-show="activities">
+	  <table class="table table-striped">
+	      <thead>
+	          <tr>
+	              <th>Type</th>
+	              <th>Date</th>
+	              <th>Title</th>
+	              <th>Time</th>
+	              <th>Distance</th>
+	              <th>Elevation</th>
+	          </tr>
+	      </thead>
+	      <tbody infinite-scroll on-scroll="getActivities" per-page="20">
+	          <tr ng-repeat="activity in activities">
+	            <td>{{activity.type}}</td>
+	            <td>{{activity.start_date | date: 'MM/dd/yyyy'}}</td>
+	            <td>{{activity.name}}</td>
+	            <td>{{activity.moving_time | time}}</td>
+	            <td>{{activity.distance / 1000}} km</td>
+	            <td>{{activity.total_elevation_gain}} m</td>
+	          </tr>
+	      </tbody>
+	  </table>
+	</div>
+</div>

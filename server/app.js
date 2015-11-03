@@ -2,16 +2,23 @@ var express = require('express'),
 	request = require('request'),
 	bodyParser = require('body-parser'),
 	cookieParser = require('cookie-parser'),
+	session = require('express-session'),
+	multer  = require('multer'),
+	fs  = require('fs'),
+	upload = multer({ dest: __dirname + '/../tmp/uploads/' }),
 	app = express();
 
-
-app.use(express.static(__dirname + '/../public'));
 app.set('views', __dirname + '/../public');
 app.set('view engine', 'ejs');
-// parse application/json
+
+app.use(express.static(__dirname + '/../public'));
 app.use(bodyParser.json());
-// parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+  secret: 'StravaApp',
+  resave: false,
+  saveUninitialized: false
+}));
 
 app.get('/getSettings', function(req, res, next){
 	res.json({
@@ -34,13 +41,92 @@ app.get('/login_callback', function(req, res, next){
 
 	request.post(options, function(error, response, body){
 		if (!error && response.statusCode == 200) {
-			// access_tokenクッキー付与
-			res.append('Set-Cookie', 'access_token=' + body.access_token + '; Path=/;');
+			// access_tokenセッション付与
+			req.session.access_token = body.access_token;
+			req.session.athlete_id = body.athlete.id;
 		} else {
 			// TODO エラー処理
 			console.log('error: '+ response.statusCode);
 		}
 		res.render('index.ejs', { root: __dirname + '/../public' });
+	});
+});
+app.post('/logout', function(req, res, next){
+	var options = {
+		uri: 'https://www.strava.com/oauth/deauthorize',
+		headers: {
+			'Authorization': 'Bearer ' + req.session.access_token
+		}
+	};
+
+	request.post(options, function(error, response, body){
+		if (!error && response.statusCode == 200) {
+			// セッション破棄
+			req.session.destroy();
+    		res.clearCookie('connect.sid', { path: '/' });
+		} else {
+			// TODO エラー処理
+			console.log('error: '+ response.statusCode);
+		}
+		res.status(response.statusCode)
+		.json(JSON.parse(response.body));
+	});
+});
+app.get('/athletes', function(req, res, next){
+	var options = {
+		uri: 'https://www.strava.com/api/v3/athletes/' + req.session.athlete_id,
+		headers: {
+			'Authorization': 'Bearer ' + req.session.access_token
+		}
+	};
+	request.get(options, function(error, response, body){
+		// if(response.statusCode == 401){
+		// 	response.statusCode = 200
+		// }
+		res.status(response.statusCode)
+		.json(JSON.parse(body));
+	});
+});
+app.get('/activities', function(req, res, next){
+	var options = {
+		uri: 'https://www.strava.com/api/v3/athlete/activities',
+		form: {
+			page: req.query.page,
+			per_page: req.query.per_page
+		},
+		headers: {
+			'Authorization': 'Bearer ' + req.session.access_token
+		}
+	};
+	request.get(options, function(error, response, body){
+		res.status(response.statusCode)
+		.json(JSON.parse(response.body));
+	});
+});
+app.post('/uploads', upload.fields([{name: 'fit'}, {name: 'activity_type'}]), function(req, res, next){
+	var options = {
+		uri: 'https://www.strava.com/api/v3/uploads',
+		headers: {
+			'Authorization': 'Bearer ' + req.session.access_token
+		},
+		formData: {
+			file: {
+				value:  fs.createReadStream(req.files.fit[0].path),
+			    options: {
+			      filename: req.files.fit[0].originalname
+			    }
+			},
+			activity_type: req.body.activity_type,
+			data_type: 'fit'
+		}
+	};
+	request.post(options, function(error, response, body){
+		// tmpファイルの削除
+		fs.unlink(req.files.fit[0].path, function (err) {
+			if (err) throw err;
+		});
+		res.status(response.statusCode)
+		.json(JSON.parse(response.body));
 	});
 });
 app.all('/*', function(req, res, next) {

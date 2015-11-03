@@ -1,0 +1,42 @@
+<div>
+	<div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="panel-title">
+                <i class="glyphicon glyphicon-wrench pull-right"></i>
+                <h4>Add Activity</h4>
+            </div>
+        </div>
+        <div class="panel-body">
+            <form class="form form-vertical" ng-submit="uploads()" name="form" novalidate>
+                <div class="control-group">
+                    <label>FIT file</label>
+                    <div class="controls">
+                        <input type="file" file-model="fit" ng-model="fit" class="form-control" name="fit" placeholder="FIT file" ng-required="true">
+                    </div>
+                    <p class="text-danger" ng-show="form.fit.$error.required" ng-if="form.fit.$touched || form.$submitted">This field is required</p>
+                </div>
+
+            
+                <div class="control-group general-breath-s">
+                    <label>TYPE</label>
+                    <div class="controls">
+                        <select class="form-control" ng-model="activity_type" name="activity_type" ng-required="true">
+                            <option ng-repeat="activity_type in activity_types" ng-value="{{activity_type}}">{{activity_type}}</option>
+                        </select>
+                    </div>
+                    <p class="text-danger" ng-show="form.activity_type.$error.required" ng-if="form.activity_type.$touched || form.$submitted">This field is required</p>
+                </div>
+                <div class="control-group">
+                    <label></label>
+                    <div class="controls">
+                        <button type="submit" class="btn btn-primary" ng-disabled="proccessing">
+                            <span ng-show="!proccessing">Upload!</span>
+                            <span ng-show="proccessing">Uploading...</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!--/panel content-->
+    </div>
+</div>

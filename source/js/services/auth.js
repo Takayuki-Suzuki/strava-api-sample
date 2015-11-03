@@ -3,43 +3,41 @@
 
 	angular.module('StravaApp')
 	.factory('Auth', ['$http', '$q', '$rootScope', '$cookies', function ($http, $q, $rootScope, $cookies) {
-		var currentUser = {};
+		var currentUser;
 		var defer = $q.defer();
-
-		if(!$cookies.get('access_token')){
-			defer.resolve({});
-		} else {
-			console.log('Bearer ' + $cookies.get('access_token'));
-			$http({
-				method: 'GET',
-				url: 'https://www.strava.com/api/v3/athlete',
-				headers: {'Authorization': 'Bearer ' + $cookies.get('access_token')}
-			})
-	        .success(function(data) {
-		     	currentUser = data;
-		      	defer.resolve(currentUser);
-		    })
-		    .error(function(data){
-		    	defer.resolve({});
-		    	console.log(data);
-		    });	
-		}
 
 		return {
 			defer: defer,
-		    getCurrentUser: function(cb) {
-		        defer.promise.then(function(){
-		    		cb(currentUser);
-		    	}).catch(function(){
-		    		cb(null);
-		    	});
+			getCurrentUserAsync: function(cb) {
+		        $http.get('/athletes/')
+		        .success(function(data, status) {
+		        	currentUser = data;
+			      	defer.resolve(data);
+			      	if(cb) cb(data);
+			    })
+			    .error(function(data, status){
+			    	defer.resolve();
+			    	if(cb) cb(null);
+			    });	
+		    	return defer.promise;
 		    },
-		    isLoggedIn: function(cb){
-		    	defer.promise.then(function(){
-		    		cb(currentUser.hasOwnProperty('id'));
+		    getCurrentUser: function(){
+		    	return currentUser;
+		    },
+		    isLoggedInAsync: function(cb){
+		    	defer.promise.then(function(currentUser){
+		    		cb(currentUser && currentUser.hasOwnProperty('id'));
 		    	}).catch(function(){
 		    		cb(false);
 		    	});
+		    	return defer.promise;
+		    },
+		    isLoggedIn: function(){
+		    	return currentUser && currentUser.hasOwnProperty('id');
+		    },
+		    logout: function(){
+		    	currentUser = null;
+		    	defer = $q.defer();
 		    }
 		}
 	}]);

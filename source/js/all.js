@@ -10,17 +10,22 @@
 	])
 	.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
 		// $httpProvider.defaults.withCredentials = true;
+		// $httpProvider.interceptors.push('AuthInterceptor');
 		$urlRouterProvider
 		.otherwise('/');
 
 		$stateProvider
 		.state('root', {
 			abstract: true,
-			template: '<div ui-view=""></div>',
+			template: '<div ui-view></div>',
     		resolve: {
     			constants: function (ConstantsService) {
-      			return ConstantsService.getConstants();
-    		}}
+      				return ConstantsService.getConstants();
+	    		},
+	    		currentUser: function($cookies, Auth){
+	    			return Auth.getCurrentUserAsync();
+	    		}
+	    	}
 		})
 		.state('login', { 
 			parent: 'root',
@@ -32,7 +37,7 @@
 		.state('login_callback', { 
 			parent: 'root',
 	        url: "/login_callback",
-	        templateUrl: 'views/login/login_callback.html',
+	        templateUrl: 'views/top.html',
 	        controller: 'LoginCallbackCtrl',
 	        noNeedForLoggedInUser: true
 		})
@@ -47,6 +52,30 @@
 			url: '/',
 			templateUrl: 'views/top.html',
 			controller: 'TopCtrl',
+			requireLogin: true,
+			resolve: {
+				activities: function($http){
+					return $http.get('/activities?page=1&per_page=20');
+				}
+			}
+		})
+		// .state('activities', {
+		// 	parent: 'root',
+		// 	url: '/',
+		// 	templateUrl: 'views/activites/new.html',
+		// 	controller: 'NewActivitiesCtrl',
+		// 	requireLogin: true,
+		// 	resolve: {
+		// 		activities: function($http){
+		// 			return $http.get('/activities');
+		// 		}
+		// 	}
+		// });
+		.state('new_activities', {
+			parent: 'root',
+			url: '/new_activities',
+			templateUrl: 'views/activities/new.html',
+			controller: 'NewActivitiesCtrl',
 			requireLogin: true
 		});
 		$locationProvider.html5Mode(true);
@@ -54,7 +83,7 @@
 
 	.run(['$rootScope', '$location', '$state', '$urlRouter', 'Auth', function ($rootScope, $location, $state, $urlRouter, Auth) {
 		$rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams){
-			Auth.isLoggedIn(function(isLoggedIn){
+			Auth.isLoggedInAsync(function(isLoggedIn){
         		if(toState.requireLogin && !isLoggedIn){
 	        		e.preventDefault();
 	        		$state.go('login');

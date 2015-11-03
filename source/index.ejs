@@ -12,7 +12,8 @@
 
     <link href="/css/application.css" rel="stylesheet" type="text/css" />
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="bower_components/jquery-ui/themes/flick/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+    <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+   <!--  <link href="bower_components/jquery-ui/themes/flick/jquery-ui.min.css" rel="stylesheet" type="text/css" /> -->
 
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
@@ -23,7 +24,9 @@
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
     <script src="bower_components/angular-breadcrumb/dist/angular-breadcrumb.min.js"></script>
     <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="bower_components/lodash/lodash.min.js"></script>
@@ -45,7 +48,10 @@
           <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav navbar-right">
                   <li class="dropdown" ng-show="isLoggedIn()">
-                      <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i> {{getCurrentUser().display_name}} さん <span class="caret"></span></a>
+                      <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i> 
+                        {{getCurrentUser().firstname}}
+                        {{getCurrentUser().lastname}} 
+                        さん <span class="caret"></span></a>
                       <ul id="g-account-menu" class="dropdown-menu" role="menu">
                           <li><a ui-sref="logout()">ログアウト</a></li>
                       </ul>
@@ -69,8 +75,7 @@
       </script>
 
       <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
-    </div>
-    <div class="container-fluid" ui-view>
+    <div class="container-fluid" ui-view></div>
   </div>
   <!-- /Main -->
 

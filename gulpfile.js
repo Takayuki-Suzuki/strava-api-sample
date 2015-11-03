@@ -40,7 +40,7 @@ gulp.task('browser-sync', ['nodemon'], function() {
 });
 
 gulp.task('watch', function(){
-  gulp.watch(['source/views/**', 'source/views/index.ejs'], ['build:views']);
+  gulp.watch(['source/views/**', 'source/index.ejs'], ['build:views']);
   gulp.watch(['source/scss/**'], ['build:css']);
   gulp.watch(['source/js/**'], ['build:js']);
   gulp.watch(['source/fonts/**'], ['build:fonts']);
