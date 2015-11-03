@@ -13,6 +13,7 @@
     <link href="/css/application.css" rel="stylesheet" type="text/css" />
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="bower_components/angular-chart.js/dist/angular-chart.css" />
    <!--  <link href="bower_components/jquery-ui/themes/flick/jquery-ui.min.css" rel="stylesheet" type="text/css" /> -->
 
     <script src="bower_components/jquery/dist/jquery.js"></script>
@@ -30,6 +31,8 @@
     <script src="bower_components/angular-breadcrumb/dist/angular-breadcrumb.min.js"></script>
     <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
     <script src="bower_components/lodash/lodash.min.js"></script>
+    <script src="bower_components/Chart.js/Chart.min.js"></script>
+    <script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
   </head>
 
   <body class="{{controller}}" ng-app="StravaApp" ng-controller="MainCtrl">
@@ -53,13 +56,13 @@
                      <!--    <i class="glyphicon glyphicon-user"></i>  -->
                         {{getCurrentUser().firstname}}
                         {{getCurrentUser().lastname}} 
-                        さん <span class="caret"></span></a>
+                        <span class="caret"></span></a>
                       <ul id="g-account-menu" class="dropdown-menu" role="menu">
-                          <li><a ui-sref="logout()">ログアウト</a></li>
+                          <li><a ui-sref="logout()">Logout</a></li>
                       </ul>
                   </li>
                   <li ng-show="!isLoggedIn()">
-                      <a ui-sref="login()" ng-show="!isLoggedIn()">ログイン</a>
+                      <a ui-sref="login()" ng-show="!isLoggedIn()">Login</a>
                   </li>
               </ul>
           </div>

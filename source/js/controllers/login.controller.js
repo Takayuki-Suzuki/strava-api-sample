@@ -4,8 +4,10 @@
 	.controller('LoginCtrl', ['$scope', '$http', 'constants', function($scope, $http, constants){
 		$scope.constants = constants;
 	}])
-	.controller('LoginCallbackCtrl', ['$scope', '$http', '$state', '$location', 'constants', function($scope, $http, $state, $location, constants){
-
+	.controller('LoginCallbackCtrl', ['$scope', '$http', '$state', '$location', 'Auth', function($scope, $http, $state, $location, Auth){
+		// Auth.getCurrentUserAsync(function(){
+			// $state.go('top');
+		// });
 	}])
 	.controller('LogoutCtrl', ['$http', '$state', 'Auth', function($http, $state, Auth){
 		Auth.logout();

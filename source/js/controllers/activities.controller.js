@@ -52,8 +52,10 @@
 		};
 	}])
 	.controller('ShowActivitiesCtrl', ['$scope', '$http', '$state', '$q', 'Util', 'activities', function($scope, $http, $state, $q, Util, activities){
+		$scope.types = ['time', 'altitude', 'heartrate', 'cadence', 'watts'];
 		$scope.activities = activities.data;
 		$scope.params = $state.params;
+		$scope.streams = {};
 
 		$scope.getActivities = function(per_page){
 			var defer = $q.defer();
@@ -70,6 +72,16 @@
 			return defer.promise;
 		};
 
+		$scope.getStreams = function(type){
+			return $http.get('/activities/' + $state.params.id + '/streams/' + type)
+			.success(function(data, status){
+				$scope.streams[type] = data;
+			})
+			.error(function(data, status){
+				Util.addAlert('Error!' + data.error, 'danger');
+			});
+		};
+
 		$http.get('/activities/' + $state.params.id)
 		.success(function(data, status){
 			$scope.activity = data;
@@ -78,12 +90,36 @@
 			Util.addAlert('Error!' + data.error, 'danger');
 		});
 
-		$http.get('/activities/' + $state.params.id + '/laps')
-		.success(function(data, status){
-			$scope.activityLaps = data;
-		})
-		.error(function(data, status){
-			Util.addAlert('Error!' + data.error, 'danger');
+		var createData = function(){
+			var data = [];
+			$scope.types.forEach(function(type){
+				// console.log(_.where($scope.streams[type], {type: type})[0].data);
+				data.push(_.where($scope.streams[type], {type: type})[0].data);
+			});
+			// console.log(data);
+			return data;
+		}
+
+		var queues = [];
+		// stream
+		$scope.types.forEach(function(type){
+			queues.push($scope.getStreams(type));
 		});
+		
+		$q.all(queues).then(function(){
+			console.log(_.where($scope.streams.time, {type: 'distance'})[0].data);
+			$scope.labels = _.where($scope.streams.time, {type: 'distance'})[0].data;
+			$scope.data = createData();
+			// console.log('done');
+		})
+
+		
+		
+		
+		
+
+		$scope.onClick = function (points, evt) {
+			console.log(points, evt);
+		};
 	}])
 })();

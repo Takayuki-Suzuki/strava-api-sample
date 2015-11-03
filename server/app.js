@@ -28,6 +28,16 @@ app.get('/getSettings', function(req, res, next){
 		// ACCESS_TOKEN: process.env.ACCESS_TOKEN
 	})
 });
+app.get('/getCurrentUser', function(req, res, next){
+	// console.log(req.session.currentUser);
+	if(req.session.currentUser){
+		res.status(200).json({
+			data: req.session.currentUser
+		});
+	} else {
+		res.status(200).json({data: null});
+	}
+});
 app.get('/login_callback', function(req, res, next){
 	var options = {
 		uri: 'https://www.strava.com/oauth/token',
@@ -43,12 +53,14 @@ app.get('/login_callback', function(req, res, next){
 		if (!error && response.statusCode == 200) {
 			// access_tokenセッション付与
 			req.session.access_token = body.access_token;
-			req.session.athlete_id = body.athlete.id;
+			req.session.currentUser = body.athlete;
 		} else {
 			// TODO エラー処理
 			console.log('error: '+ response.statusCode);
 		}
-		res.render('index.ejs', { root: __dirname + '/../public' });
+		res.redirect('/#/login_callback');
+    	// return;
+		// res.render('index.ejs', { root: __dirname + '/../public', currentUser: req.session.currentUser });
 	});
 });
 app.post('/logout', function(req, res, next){
@@ -73,8 +85,9 @@ app.post('/logout', function(req, res, next){
 	});
 });
 app.get('/athletes', function(req, res, next){
+	console.log(req.session.currentUser);
 	var options = {
-		uri: 'https://www.strava.com/api/v3/athletes/' + req.session.athlete_id,
+		uri: 'https://www.strava.com/api/v3/athletes/' + req.session.currentUser.id,
 		headers: {
 			'Authorization': 'Bearer ' + req.session.access_token
 		}
@@ -130,6 +143,21 @@ app.get('/activities/:id/zones', function(req, res, next){
 app.get('/activities/:id/laps', function(req, res, next){
 	var options = {
 		uri: 'https://www.strava.com/api/v3/activities/' + req.params.id + '/laps',
+		headers: {
+			'Authorization': 'Bearer ' + req.session.access_token
+		}
+	};
+	request.get(options, function(error, response, body){
+		res.status(response.statusCode)
+		.json(JSON.parse(response.body));
+	});
+});
+app.get('/activities/:id/streams/:type', function(req, res, next){
+	var options = {
+		uri: 'https://www.strava.com/api/v3/activities/' + req.params.id + '/streams/' + req.params.type,
+		// form: {
+		// 	resolution: 'high'
+		// },
 		headers: {
 			'Authorization': 'Bearer ' + req.session.access_token
 		}

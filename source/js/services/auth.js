@@ -6,38 +6,41 @@
 		var currentUser;
 		var defer = $q.defer();
 
+		var isLoggedIn = function(){
+	    	return !!currentUser && currentUser.hasOwnProperty('id');
+	    };
+		// currentUser.$promise = defer.promise;
+		$http.get('/getCurrentUser')
+        .success(function(result) {
+        	currentUser = result.data;
+        	defer.resolve(currentUser);
+	      	// if(cb) cb(result.data);
+	    })
+	    .error(function(data, status){
+	    	currentUser = null;
+	    	defer.resolve(currentUser);
+	    	// if(cb) cb(null);
+	    });
+
+
+
 		return {
 			defer: defer,
-			getCurrentUserAsync: function(cb) {
-		        $http.get('/athletes/')
-		        .success(function(data, status) {
-		        	currentUser = data;
-			      	defer.resolve(data);
-			      	if(cb) cb(data);
-			    })
-			    .error(function(data, status){
-			    	defer.resolve();
-			    	if(cb) cb(null);
-			    });	
-		    	return defer.promise;
-		    },
+			// getCurrentUserAsync: function(cb) {
+		 //        return 	
+		 //    	// return defer.promise;
+		 //    },
 		    getCurrentUser: function(){
 		    	return currentUser;
 		    },
 		    isLoggedInAsync: function(cb){
-		    	defer.promise.then(function(currentUser){
-		    		cb(currentUser && currentUser.hasOwnProperty('id'));
-		    	}).catch(function(){
-		    		cb(false);
+		    	defer.promise.then(function(user){
+		    		cb(isLoggedIn());
 		    	});
-		    	return defer.promise;
 		    },
-		    isLoggedIn: function(){
-		    	return currentUser && currentUser.hasOwnProperty('id');
-		    },
+		    isLoggedIn: isLoggedIn,
 		    logout: function(){
 		    	currentUser = null;
-		    	defer = $q.defer();
 		    }
 		}
 	}]);

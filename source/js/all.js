@@ -6,13 +6,14 @@
 	  'ngResource',
 	  'ui.router',
 	  'ui.bootstrap',
+	  'chart.js',
 	  'ncy-angular-breadcrumb'
 	])
 	.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
 		// $httpProvider.defaults.withCredentials = true;
 		// $httpProvider.interceptors.push('AuthInterceptor');
 		$urlRouterProvider
-		.otherwise('/');
+		.otherwise('/activities');
 
 		$stateProvider
 		.state('root', {
@@ -21,10 +22,11 @@
     		resolve: {
     			constants: function (ConstantsService) {
       				return ConstantsService.getConstants();
-	    		},
-	    		currentUser: function($cookies, Auth){
-	    			return Auth.getCurrentUserAsync();
 	    		}
+	    		//,
+	    		// currentUser: function($cookies, Auth){
+	    		// 	return Auth.getCurrentUserAsync();
+	    		// }
 	    	}
 		})
 		.state('login', { 
@@ -49,26 +51,26 @@
 	    })
 		.state('top', {
 			parent: 'root',
-			url: '/',
+			url: '/activities',
 			templateUrl: 'views/top.html',
 			controller: 'TopCtrl',
 			requireLogin: true,
 			resolve: {
-				activities: function($http){
+				activities: function($http, Auth){
 					return $http.get('/activities?page=1&per_page=20');
 				}
 			}
 		})
 		.state('new_activities', {
-			parent: 'root',
-			url: '/new_activities',
+			parent: 'top',
+			url: '/new',
 			templateUrl: 'views/activities/new.html',
 			controller: 'NewActivitiesCtrl',
 			requireLogin: true
 		})
 		.state('show_activities', {
 			parent: 'top',
-			url: 'activities/:id',
+			url: '/:id',
 			templateUrl: 'views/activities/show.html',
 			controller: 'ShowActivitiesCtrl',
 			requireLogin: true
@@ -78,9 +80,10 @@
 
 	.run(['$rootScope', '$location', '$state', '$urlRouter', 'Auth', function ($rootScope, $location, $state, $urlRouter, Auth) {
 		$rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams){
-			//console.log(toState);
+			// console.log(Auth);
 			Auth.isLoggedInAsync(function(isLoggedIn){
-        		if(toState.requireLogin && !isLoggedIn){
+				// console.log(toState.requireLogin);
+				if(toState.requireLogin && !isLoggedIn){
 	        		e.preventDefault();
 	        		$state.go('login');
 	        	}
@@ -88,10 +91,10 @@
 	        		e.preventDefault();
 	        		$state.go('top');
 	        	}
-        	});
+			})
 	    });
 	    $rootScope.$on('$stateChangeSuccess',function(event, toState){
-
+	    	$rootScope.controller = toState.controller;
 	   	});
 	}])
 	// .constant('globals', );
