@@ -21,12 +21,23 @@
 				<p class="sg-weak">KCal</p>
 			</li>
 		</ul>
-		{{streams}}
-		<p ng-repeart="stream in streams">{{stream}}</p>
 		<p class="text-center">
 			<img src="http://maps.google.com/maps/api/staticmap?sensor=false&size=640x640&maptype=roadmap&path=color:0x0000ffFF%7Cweight:5%7Cenc:{{activity.map.polyline}}">
 		</p>
-		<canvas id="line" class="chart chart-line" chart-data="data" chart-labels="labels" chart-legend="true" chart-series="types" chart-click="onClick" >
-		</canvas>
+		<ul class="nav nav-tabs">
+			<li ng-click="seriesType = 'time'" ng-class="{active: seriesType == 'time'}"><a>time</a></li>
+			<li ng-click="seriesType = 'distance'" ng-class="{active: seriesType == 'distance'}"><a>distance</a></li>
+		</ul>
+		<div id="js-chartArea" class="sg-chart-area">
+			<nvd3 options="options[0]" data="data.distance"></nvd3>
+			<nvd3 options="options[0]" data="data.time"></nvd3>
+			<nvd3 options="options[1]" data="data.altitude"></nvd3>
+			<nvd3 options="options[2]" data="data.heartrate"></nvd3>
+			<nvd3 options="options[3]" data="data.cadence"></nvd3>
+			<nvd3 options="options[4]" data="data.watts"></nvd3>
+			<div class="sg-mask" ng-show="loading">
+				<i class="fa fa-spinner fa-spin"></i>
+			</div>
+		</div>
 	</div>
 </div>

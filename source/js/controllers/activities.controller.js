@@ -41,21 +41,150 @@
 						Util.addAlert('FIT file has successfully uploaded!', 'success');
 					});
 					$scope.proccessing = false;
-					console.log(data, status);
+					// console.log(data, status);
 				})
 				.error(function(data, status){
 					Util.addAlert('Error!' + data.error, 'danger');
 					$scope.proccessing = false;
-					console.log(data, status);
+					// console.log(data, status);
 				});
 			}
 		};
 	}])
-	.controller('ShowActivitiesCtrl', ['$scope', '$http', '$state', '$q', 'Util', 'activities', function($scope, $http, $state, $q, Util, activities){
-		$scope.types = ['time', 'altitude', 'heartrate', 'cadence', 'watts'];
+	.controller('ShowActivitiesCtrl', ['$scope', '$http', '$state', '$q', '$filter', 'Util', 'activities', function($scope, $http, $state, $q, $filter, Util, activities){
+		$scope.types = {
+			time: ['distance', 'altitude', 'heartrate', 'cadence', 'watts'],
+			distance: ['time', 'altitude', 'heartrate', 'cadence', 'watts']
+		};
 		$scope.activities = activities.data;
 		$scope.params = $state.params;
 		$scope.streams = {};
+		$scope.seriesType = 'time';
+		$scope.data = {};
+		$scope.loading = false;
+
+		$scope.changeSeriesType = function(seriesType){
+			$scope.seriesType = seriesType;
+		}
+
+		var init = function(){
+			updateData().then(function(){
+				$scope.$watch('seriesType', function(){
+			    	updateData();
+			    });
+			});
+		};
+
+		var updateData = function(){
+			var queues = [];
+
+			$scope.loading = true;
+
+			$http.get('/activities/' + $state.params.id)
+			.success(function(data, status){
+				$scope.activity = data;
+			})
+			.error(function(data, status){
+				Util.addAlert('Error!' + data.error, 'danger');
+			});
+
+			$scope.types[$scope.seriesType].forEach(function(type){
+				queues.push(getStreams(type));
+			});
+			
+			return $q.all(queues).then(function(){
+				$scope.loading = false;
+				$scope.data = $scope.createData();
+				$scope.options = getOptions();
+			});
+		}
+
+		var getStreams = function(type){
+			return $http.get('/activities/' + $state.params.id + '/streams/' + type + '?seriesType=' + $scope.seriesType)
+			.success(function(data, status){
+				$scope.streams[type] = data;
+				// console.log(data);
+			})
+			.error(function(data, status){
+				Util.addAlert('Error!' + data.error, 'danger');
+			});
+		};
+
+		var getOptions = function(){
+			var options = [];
+			_.each($scope.types[$scope.seriesType], function(type, i){
+				options.push(getOption(type, i));
+			});
+			return options;
+		}
+
+		var getOption =  function(type, num){
+	        return {
+	            	chart: {
+	                type: 'lineChart',
+	                height: 150,
+	                margin : {
+	                    top: 20,
+	                    right: 20,
+	                    bottom: 50,
+	                    left: 65
+	                },
+	                x: function(d){ return d[0]; },
+	                y: function(d){ return d[1]; },
+
+	                color: [d3.scale.category10().range()[num]],
+	                duration: 300,
+	                useInteractiveGuideline: true,
+	                clipVoronoi: false,
+	                // dispatch: {
+	                //     stateChange: function(e){ console.log("stateChange"); },
+	                //     changeState: function(e){ console.log("changeState"); },
+	                //     tooltipShow: function(e){ console.log("tooltipShow"); },
+	                //     tooltipHide: function(e){ console.log("tooltipHide"); }
+	                // },
+
+	                xAxis: {
+	                    axisLabel: $scope.seriesType,
+	                    tickFormat: function(d) {
+	                    	if($scope.seriesType === 'time'){
+	                    		return $filter('time')(d);
+	                    	} else {
+	                    		return d;
+	                    	}
+	                        
+	                    },
+	                    showMaxMin: false,
+	                    staggerLabels: true,
+	                    axisLabelDistance: 10
+	                },
+
+	                yAxis: {
+	                    axisLabel: type,
+	                    axisLabelDistance: 0
+	                }
+	            }
+	        };
+	    };
+
+	    $scope.createData = function(){
+			var editedData = {};
+			// console.time('timer1');
+			$scope.types[$scope.seriesType].forEach(function(type){
+				console.log($scope.streams[type]);
+				var seriesType = _.where($scope.streams[type], {type: $scope.seriesType})[0].data;
+				var dataArray = _.where($scope.streams[type], {type: type})[0].data;
+				var values = [];
+				_.each(dataArray, function(data, i){
+					values.push([seriesType[i], data]);
+				});
+				editedData[type] = [{
+					key: type,
+					values: values
+				}];
+			});
+			// console.timeEnd('timer1');
+			return editedData;
+		};
 
 		$scope.getActivities = function(per_page){
 			var defer = $q.defer();
@@ -71,55 +200,8 @@
 			});
 			return defer.promise;
 		};
+		$scope.options = getOptions();
 
-		$scope.getStreams = function(type){
-			return $http.get('/activities/' + $state.params.id + '/streams/' + type)
-			.success(function(data, status){
-				$scope.streams[type] = data;
-			})
-			.error(function(data, status){
-				Util.addAlert('Error!' + data.error, 'danger');
-			});
-		};
-
-		$http.get('/activities/' + $state.params.id)
-		.success(function(data, status){
-			$scope.activity = data;
-		})
-		.error(function(data, status){
-			Util.addAlert('Error!' + data.error, 'danger');
-		});
-
-		var createData = function(){
-			var data = [];
-			$scope.types.forEach(function(type){
-				// console.log(_.where($scope.streams[type], {type: type})[0].data);
-				data.push(_.where($scope.streams[type], {type: type})[0].data);
-			});
-			// console.log(data);
-			return data;
-		}
-
-		var queues = [];
-		// stream
-		$scope.types.forEach(function(type){
-			queues.push($scope.getStreams(type));
-		});
-		
-		$q.all(queues).then(function(){
-			console.log(_.where($scope.streams.time, {type: 'distance'})[0].data);
-			$scope.labels = _.where($scope.streams.time, {type: 'distance'})[0].data;
-			$scope.data = createData();
-			// console.log('done');
-		})
-
-		
-		
-		
-		
-
-		$scope.onClick = function (points, evt) {
-			console.log(points, evt);
-		};
+		init();
 	}])
 })();

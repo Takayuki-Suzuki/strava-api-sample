@@ -85,7 +85,7 @@ app.post('/logout', function(req, res, next){
 	});
 });
 app.get('/athletes', function(req, res, next){
-	console.log(req.session.currentUser);
+	// console.log(req.session.currentUser);
 	var options = {
 		uri: 'https://www.strava.com/api/v3/athletes/' + req.session.currentUser.id,
 		headers: {
@@ -153,11 +153,13 @@ app.get('/activities/:id/laps', function(req, res, next){
 	});
 });
 app.get('/activities/:id/streams/:type', function(req, res, next){
+	var seriesType = req.query.seriesType ? req.query.seriesType : 'time';
 	var options = {
 		uri: 'https://www.strava.com/api/v3/activities/' + req.params.id + '/streams/' + req.params.type,
-		// form: {
-		// 	resolution: 'high'
-		// },
+		form: {
+			resolution: 'low',
+			series_type: seriesType
+		},
 		headers: {
 			'Authorization': 'Bearer ' + req.session.access_token
 		}

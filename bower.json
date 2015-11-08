@@ -13,7 +13,7 @@
     "jquery-ui": "~1.11.4",
     "bootstrap": "~3.3.2",
     "font-awesome": "~4.4.0",
-    "angular-chart.js": "~0.8.5"
+    "angular-nvd3": "~1.0.3"
   },
   "devDependencies": {}
 }

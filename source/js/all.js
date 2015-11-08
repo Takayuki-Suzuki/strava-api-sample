@@ -6,7 +6,7 @@
 	  'ngResource',
 	  'ui.router',
 	  'ui.bootstrap',
-	  'chart.js',
+	  'nvd3',
 	  'ncy-angular-breadcrumb'
 	])
 	.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
