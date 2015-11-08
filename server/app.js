@@ -157,7 +157,7 @@ app.get('/activities/:id/streams/:type', function(req, res, next){
 	var options = {
 		uri: 'https://www.strava.com/api/v3/activities/' + req.params.id + '/streams/' + req.params.type,
 		form: {
-			resolution: 'low',
+			resolution: 'medium',
 			series_type: seriesType
 		},
 		headers: {

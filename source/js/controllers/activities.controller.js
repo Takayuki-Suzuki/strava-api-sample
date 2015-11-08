@@ -75,11 +75,9 @@
 		}
 
 		var init = function(){
-			$scope.updateData().then(function(){
-				$scope.$watch('seriesType', function(){
-			    	$scope.updateData();
-			    });
-			});
+			$scope.$watch('seriesType', function(){
+		    	$scope.updateData();
+		    });
 		};
 
 		$scope.updateData = function(){
@@ -175,7 +173,7 @@
 
 	    $scope.createData = function(){
 			var editedData = {};
-			// console.time('timer1');
+			console.time('timer1');
 			$scope.types[$scope.seriesType].forEach(function(type){
 				var dataContainer = _.where($scope.streams[type], {type: type})[0]; 
 				if(!dataContainer) return editedData;
@@ -190,7 +188,7 @@
 					values: values
 				}];
 			});
-			// console.timeEnd('timer1');
+			console.timeEnd('timer1');
 			return editedData;
 		};
 
