@@ -1,11 +1,12 @@
 (function(){
 	'use strict';
 	
-	angular.module('StravaApp').controller('TopCtrl', ['$scope', '$q', '$http', 'activities', function($scope, $q, $http, activities){
+	angular.module('StravaApp').controller('TopCtrl', ['$scope', '$q', '$http', 'activities', 'constants', function($scope, $q, $http, activities, constants){
 		$scope.activities = activities.data;
 		$scope.page = 2;
 
 		$scope.getActivities = function(per_page){
+			per_page = per_page ? per_page : constants.PER_PAGE;
 			var defer = $q.defer();
 			$http.get('/activities?page=' + $scope.page + '&per_page=' + per_page)
 			.success(function(activities){

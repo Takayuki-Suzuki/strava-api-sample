@@ -56,8 +56,8 @@
 			controller: 'TopCtrl',
 			requireLogin: true,
 			resolve: {
-				activities: function($http, Auth){
-					return $http.get('/activities?page=1&per_page=20');
+				activities: function($http, Auth, constants){
+					return $http.get('/activities?page=1&per_page=' + constants.PER_PAGE);
 				}
 			}
 		})
@@ -66,19 +66,26 @@
 			url: '/new',
 			templateUrl: 'views/activities/new.html',
 			controller: 'NewActivitiesCtrl',
-			requireLogin: true
+			requireLogin: true,
+			ncyBreadcrumb: {
+				label: 'Upload FIT file'
+			},
 		})
 		.state('show_activities_layout', {
 			parent: 'top',
 			abstract: true,
 			templateUrl: 'views/activities/layout.html',
+			controller: 'ShowActivitiesLayoutCtrl'
 		})
 		.state('show_activities', {
 			parent: 'show_activities_layout',
 			url: '/:id',
 			templateUrl: 'views/activities/show.html',
 			controller: 'ShowActivitiesCtrl',
-			requireLogin: true
+			requireLogin: true,
+			ncyBreadcrumb: {
+				label: '{{activity.name}} Detail'
+			},
 		});
 		// $locationProvider.html5Mode(true);
 	}])

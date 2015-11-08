@@ -54,13 +54,17 @@
 			}
 		};
 	}])
+	.controller('ShowActivitiesLayoutCtrl', ['$scope', '$state', function($scope, $state){
+		$scope.layout = {};
+		$scope.layout.params = $state.params;
+	}])
 	.controller('ShowActivitiesCtrl', ['$scope', '$http', '$state', '$q', '$filter', 'Util', 'activities', function($scope, $http, $state, $q, $filter, Util, activities){
 		$scope.types = {
 			time: ['distance', 'altitude', 'heartrate', 'cadence', 'watts'],
 			distance: ['time', 'altitude', 'heartrate', 'cadence', 'watts']
 		};
 		$scope.activities = activities.data;
-		$scope.params = $state.params;
+		$scope.params = $scope.layout.params = $state.params;
 		$scope.streams = {};
 		$scope.seriesType = 'time';
 		$scope.data = {};
@@ -173,9 +177,10 @@
 			var editedData = {};
 			// console.time('timer1');
 			$scope.types[$scope.seriesType].forEach(function(type){
-				console.log($scope.streams[type]);
+				var dataContainer = _.where($scope.streams[type], {type: type})[0]; 
+				if(!dataContainer) return editedData;
 				var seriesType = _.where($scope.streams[type], {type: $scope.seriesType})[0].data;
-				var dataArray = _.where($scope.streams[type], {type: type})[0].data;
+				var dataArray = dataContainer.data;
 				var values = [];
 				_.each(dataArray, function(data, i){
 					values.push([seriesType[i], data]);
@@ -190,6 +195,7 @@
 		};
 
 		$scope.getActivities = function(per_page){
+			per_page = per_page ? per_page : constants.PER_PAGE;
 			var defer = $q.defer();
 			$http.get('/activities?page=' + $scope.page + '&per_page=' + per_page)
 			.success(function(activities){

@@ -1,11 +1,11 @@
 <div>
-	<div class="list-group col-sm-3" infinite-scroll on-scroll="getActivities" per-page="20">
-		<a ng-repeat="activity in activities" ui-sref="show_activities({id: activity.id})" class="list-group-item" ng-class="{'list-group-item-warning': params.id == activity.id}">
+	<div class="list-group col-sm-3" infinite-scroll on-scroll="getActivities">
+		<a ng-repeat="activity in activities" ui-sref="show_activities({id: activity.id})" class="list-group-item" ng-class="{'list-group-item-warning': layout.params.id == activity.id}">
 			{{activity.name}}<br />
 			<span class="sg-weak">{{activity.type}}｜{{activity.start_date | date: 'MM/dd/yyyy'}}</span>
 		</a>
 	</div>
-	<div class="col-sm-9" ui-view>
+	<div class="col-sm-9" data-ui-view>
 		
 	</div>
 </div>

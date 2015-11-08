@@ -1,4 +1,4 @@
-
+<div ncy-breadcrumb></div>
 		<div class="activity-header clearfix">
 			<figure class="col-sm-2">
 				<img src="{{getCurrentUser().profile_medium}}" class="sg-img-circle" width="75" height="75">
@@ -30,8 +30,8 @@
 			<img src="http://maps.google.com/maps/api/staticmap?sensor=false&size=640x640&maptype=roadmap&path=color:0x0000ffFF%7Cweight:5%7Cenc:{{activity.map.polyline}}">
 		</p>
 		<ul class="nav nav-tabs">
-			<li ng-click="seriesType = 'time'" ng-class="{active: seriesType == 'time'}"><a>time</a></li>
-			<li ng-click="seriesType = 'distance'" ng-class="{active: seriesType == 'distance'}"><a>distance</a></li>
+			<li ng-click="seriesType = 'time'" ng-class="{active: seriesType == 'time'}"><a style="cursor:pointer;">time</a></li>
+			<li ng-click="seriesType = 'distance'" ng-class="{active: seriesType == 'distance'}"><a style="cursor:pointer;">distance</a></li>
 		</ul>
 		<div class="activity-chart-container">
 			<nvd3 options="options[0]" data="data.distance"></nvd3>

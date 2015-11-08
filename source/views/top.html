@@ -18,7 +18,7 @@
 	              <th>Elevation</th>
 	          </tr>
 	      </thead>
-	      <tbody infinite-scroll on-scroll="getActivities" per-page="20">
+	      <tbody infinite-scroll on-scroll="getActivities">
 	          <tr ng-repeat="activity in activities" ui-sref="show_activities({id: activity.id})" class="sg-selectable">
 	            <td>{{activity.type}}</td>
 	            <td>{{activity.start_date | date: 'MM/dd/yyyy'}}</td>
