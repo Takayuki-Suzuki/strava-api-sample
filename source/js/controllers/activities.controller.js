@@ -37,10 +37,13 @@
 		            headers: {'Content-type':undefined}
 		        })
 				.success(function(data, status){
-					$state.go('top', {}, {reload: true}).then(function(){
-						Util.addAlert('FIT file has successfully uploaded!', 'success');
-					});
-					$scope.proccessing = false;
+					setTimeout(function(){
+						$state.go('top', {}, {reload: true}).then(function(){
+							$scope.proccessing = false;
+							Util.addAlert('FIT file has successfully uploaded!', 'success');
+						});
+					}, 3000);
+					
 					// console.log(data, status);
 				})
 				.error(function(data, status){
@@ -68,14 +71,14 @@
 		}
 
 		var init = function(){
-			updateData().then(function(){
+			$scope.updateData().then(function(){
 				$scope.$watch('seriesType', function(){
-			    	updateData();
+			    	$scope.updateData();
 			    });
 			});
 		};
 
-		var updateData = function(){
+		$scope.updateData = function(){
 			var queues = [];
 
 			$scope.loading = true;

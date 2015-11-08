@@ -1,5 +1,8 @@
-<div ui-view>
-	<p><a ui-sref="new_activities()">Upload FIT file</a></p>
+<section ui-view>
+	<div class="clearfix">
+		<h1 class="pull-left">Your Activities</h1>
+		<p class="pull-right sg-breath"><a ui-sref="new_activities()" class="btn btn-primary">+ Upload FIT file</a></p>
+	</div>
 	<div ng-show="!activities" style="text-align: center; font-size: 25rem">
 		<i class="fa fa-spinner fa-spin"></i>
 	</div>
@@ -27,4 +30,4 @@
 	      </tbody>
 	  </table>
 	</div>
-</div>
+</section>

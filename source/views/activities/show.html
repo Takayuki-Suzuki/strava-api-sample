@@ -1,9 +1,14 @@
-<div>
-	<div class="list-group col-sm-3" infinite-scroll on-scroll="getActivities" per-page="20">
-		<a ng-repeat="activity in activities" ui-sref="show_activities({id: activity.id})" class="list-group-item" ng-class="{'list-group-item-warning': params.id == activity.id}">{{activity.name}}</a>
-	</div>
-	<div class="col-sm-9">
-		<ul class="sg-list-horizontal text-center">
+
+		<div class="activity-header clearfix">
+			<figure class="col-sm-2">
+				<img src="{{getCurrentUser().profile_medium}}" class="sg-img-circle" width="75" height="75">
+			</figure>
+			<div class="scol-sm-10">
+				<h1>{{activity.name}}</h1>
+				<p>{{activity.type}}｜{{activity.start_date | date: 'MM/dd/yyyy'}}</p>
+			</div>
+		</div>
+		<ul class="text-center clearfix">
 			<li class="col-sm-3">
 				<p class="sg-lead">{{activity.distance / 1000 | number: 2}}</p>
 				<p class="sg-weak">KM</p>
@@ -28,16 +33,14 @@
 			<li ng-click="seriesType = 'time'" ng-class="{active: seriesType == 'time'}"><a>time</a></li>
 			<li ng-click="seriesType = 'distance'" ng-class="{active: seriesType == 'distance'}"><a>distance</a></li>
 		</ul>
-		<div id="js-chartArea" class="sg-chart-area">
+		<div class="activity-chart-container">
 			<nvd3 options="options[0]" data="data.distance"></nvd3>
 			<nvd3 options="options[0]" data="data.time"></nvd3>
 			<nvd3 options="options[1]" data="data.altitude"></nvd3>
 			<nvd3 options="options[2]" data="data.heartrate"></nvd3>
 			<nvd3 options="options[3]" data="data.cadence"></nvd3>
 			<nvd3 options="options[4]" data="data.watts"></nvd3>
-			<div class="sg-mask" ng-show="loading">
+			<div class="activity-chart-mask" ng-show="loading">
 				<i class="fa fa-spinner fa-spin"></i>
 			</div>
 		</div>
-	</div>
-</div>

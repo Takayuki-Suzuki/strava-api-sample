@@ -68,8 +68,13 @@
 			controller: 'NewActivitiesCtrl',
 			requireLogin: true
 		})
-		.state('show_activities', {
+		.state('show_activities_layout', {
 			parent: 'top',
+			abstract: true,
+			templateUrl: 'views/activities/layout.html',
+		})
+		.state('show_activities', {
+			parent: 'show_activities_layout',
 			url: '/:id',
 			templateUrl: 'views/activities/show.html',
 			controller: 'ShowActivitiesCtrl',
@@ -78,7 +83,7 @@
 		// $locationProvider.html5Mode(true);
 	}])
 
-	.run(['$rootScope', '$location', '$state', '$urlRouter', 'Auth', function ($rootScope, $location, $state, $urlRouter, Auth) {
+	.run(['$rootScope', '$location', '$state', '$urlRouter', '$anchorScroll', 'Auth', function ($rootScope, $location, $state, $urlRouter, $anchorScroll, Auth) {
 		$rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams){
 			// console.log(Auth);
 			Auth.isLoggedInAsync(function(isLoggedIn){
@@ -95,6 +100,7 @@
 	    });
 	    $rootScope.$on('$stateChangeSuccess',function(event, toState){
 	    	$rootScope.controller = toState.controller;
+	    	$anchorScroll();
 	   	});
 	}])
 	// .constant('globals', );
