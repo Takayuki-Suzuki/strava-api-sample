@@ -5,9 +5,7 @@
 		$scope.constants = constants;
 	}])
 	.controller('LoginCallbackCtrl', ['$scope', '$http', '$state', '$location', 'Auth', function($scope, $http, $state, $location, Auth){
-		// Auth.getCurrentUserAsync(function(){
-			// $state.go('top');
-		// });
+
 	}])
 	.controller('LogoutCtrl', ['$http', '$state', 'Auth', function($http, $state, Auth){
 		Auth.logout();

@@ -24,7 +24,7 @@
 	            <td>{{activity.start_date | date: 'MM/dd/yyyy'}}</td>
 	            <td>{{activity.name}}</td>
 	            <td>{{activity.moving_time | time}}</td>
-	            <td>{{activity.distance / 1000}} km</td>
+	            <td>{{activity.distance / 1000 | number: 2}} km</td>
 	            <td>{{activity.total_elevation_gain}} m</td>
 	          </tr>
 	      </tbody>

@@ -66,7 +66,7 @@ gulp.task('build:js', function () {
     gulp.src([path.src.js, '!' + path.dest.js + compileFileName])
         .pipe($.plumber())
         .pipe($.concat(compileFileName))
-        // .pipe($.uglify({preserveComments:'some'}))
+        .pipe($.uglify())
         .pipe(gulp.dest(path.dest.js));
     reload();
 });

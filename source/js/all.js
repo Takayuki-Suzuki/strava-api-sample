@@ -10,8 +10,6 @@
 	  'ncy-angular-breadcrumb'
 	])
 	.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', '$httpProvider', function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
-		// $httpProvider.defaults.withCredentials = true;
-		// $httpProvider.interceptors.push('AuthInterceptor');
 		$urlRouterProvider
 		.otherwise('/activities');
 
@@ -20,13 +18,9 @@
 			abstract: true,
 			template: '<div ui-view></div>',
     		resolve: {
-    			constants: function (ConstantsService) {
+    			constants: ['ConstantsService', function (ConstantsService) {
       				return ConstantsService.getConstants();
-	    		}
-	    		//,
-	    		// currentUser: function($cookies, Auth){
-	    		// 	return Auth.getCurrentUserAsync();
-	    		// }
+	    		}]
 	    	}
 		})
 		.state('login', { 
@@ -56,9 +50,12 @@
 			controller: 'TopCtrl',
 			requireLogin: true,
 			resolve: {
-				activities: function($http, Auth, constants){
-					return $http.get('/activities?page=1&per_page=' + constants.PER_PAGE);
-				}
+				activities: ['$http', 'Auth', 'constants', 'Util', function($http, Auth, constants, Util){
+					return $http.get('/activities?page=1&per_page=' + constants.PER_PAGE)
+					.error(function(data, status){
+						Util.addAlert('Error!' + data.error, 'danger');
+					});;
+				}]
 			}
 		})
 		.state('new_activities', {
@@ -85,7 +82,7 @@
 			requireLogin: true,
 			ncyBreadcrumb: {
 				label: '{{activity.name}} Detail'
-			},
+			}
 		});
 		// $locationProvider.html5Mode(true);
 	}])
@@ -110,5 +107,4 @@
 	    	$anchorScroll();
 	   	});
 	}])
-	// .constant('globals', );
 })();

@@ -1,46 +1,48 @@
 <div ncy-breadcrumb></div>
-		<div class="activity-header clearfix">
-			<figure class="col-sm-2">
-				<img src="{{getCurrentUser().profile_medium}}" class="sg-img-circle" width="75" height="75">
-			</figure>
-			<div class="scol-sm-10">
-				<h1>{{activity.name}}</h1>
-				<p>{{activity.type}}｜{{activity.start_date | date: 'MM/dd/yyyy'}}</p>
-			</div>
+<section>
+	<div class="activity-header clearfix">
+		<figure class="col-sm-2">
+			<img src="{{getCurrentUser().profile_medium}}" class="sg-img-circle" width="75" height="75">
+		</figure>
+		<div class="scol-sm-10">
+			<h1>{{activity.name}}</h1>
+			<p>{{activity.type}}｜{{activity.start_date | date: 'MM/dd/yyyy'}}</p>
 		</div>
-		<ul class="text-center clearfix">
-			<li class="col-sm-3">
-				<p class="sg-lead">{{activity.distance / 1000 | number: 2}}</p>
-				<p class="sg-weak">KM</p>
-			</li>
-			<li class="col-sm-3">
-				<p class="sg-lead">{{activity.elapsed_time | time}}</p>
-				<p class="sg-weak">TIME</p>
-			</li>
-			<li class="col-sm-3">
-				<p class="sg-lead">{{1 / (activity.average_speed * 60 / 1000) | number: 2}}</p>
-				<p class="sg-weak">MIN/KM</p>
-			</li>
-			<li class="col-sm-3">
-				<p class="sg-lead">{{activity.calories}}</p>
-				<p class="sg-weak">KCal</p>
-			</li>
-		</ul>
-		<p class="text-center">
-			<img src="http://maps.google.com/maps/api/staticmap?sensor=false&size=640x640&maptype=roadmap&path=color:0x0000ffFF%7Cweight:5%7Cenc:{{activity.map.polyline}}">
-		</p>
-		<ul class="nav nav-tabs">
-			<li ng-click="seriesType = 'time'" ng-class="{active: seriesType == 'time'}"><a style="cursor:pointer;">time</a></li>
-			<li ng-click="seriesType = 'distance'" ng-class="{active: seriesType == 'distance'}"><a style="cursor:pointer;">distance</a></li>
-		</ul>
-		<div class="activity-chart-container">
-			<nvd3 options="options[0]" data="data.distance"></nvd3>
-			<nvd3 options="options[0]" data="data.time"></nvd3>
-			<nvd3 options="options[1]" data="data.altitude"></nvd3>
-			<nvd3 options="options[2]" data="data.heartrate"></nvd3>
-			<nvd3 options="options[3]" data="data.cadence"></nvd3>
-			<nvd3 options="options[4]" data="data.watts"></nvd3>
-			<div class="activity-chart-mask" ng-show="loading">
-				<i class="fa fa-spinner fa-spin"></i>
-			</div>
+	</div>
+	<ul class="text-center clearfix">
+		<li class="col-sm-3">
+			<p class="sg-lead">{{activity.distance / 1000 | number: 2}}</p>
+			<p class="sg-weak">KM</p>
+		</li>
+		<li class="col-sm-3">
+			<p class="sg-lead">{{activity.elapsed_time | time}}</p>
+			<p class="sg-weak">TIME</p>
+		</li>
+		<li class="col-sm-3">
+			<p class="sg-lead">{{1 / (activity.average_speed * 60 / 1000) | number: 2}}</p>
+			<p class="sg-weak">MIN/KM</p>
+		</li>
+		<li class="col-sm-3">
+			<p class="sg-lead">{{activity.calories}}</p>
+			<p class="sg-weak">KCal</p>
+		</li>
+	</ul>
+	<p class="text-center">
+		<img src="http://maps.google.com/maps/api/staticmap?sensor=false&size=640x480&maptype=roadmap&path=color:0x0000ffFF%7Cweight:5%7Cenc:{{activity.map.polyline}}" width="640" height="480">
+	</p>
+	<ul class="nav nav-tabs">
+		<li ng-click="seriesType = 'time'" ng-class="{active: seriesType == 'time'}"><a style="cursor:pointer;">time</a></li>
+		<li ng-click="seriesType = 'distance'" ng-class="{active: seriesType == 'distance'}"><a style="cursor:pointer;">distance</a></li>
+	</ul>
+	<div class="activity-chart-container">
+		<nvd3 options="options[0]" data="data.distance"></nvd3>
+		<nvd3 options="options[0]" data="data.time"></nvd3>
+		<nvd3 options="options[1]" data="data.altitude"></nvd3>
+		<nvd3 options="options[2]" data="data.heartrate"></nvd3>
+		<nvd3 options="options[3]" data="data.cadence"></nvd3>
+		<nvd3 options="options[4]" data="data.watts"></nvd3>
+		<div class="activity-chart-mask" ng-show="loading">
+			<i class="fa fa-spinner fa-spin"></i>
 		</div>
+	</div>
+</section>

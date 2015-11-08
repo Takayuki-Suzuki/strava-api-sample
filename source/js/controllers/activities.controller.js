@@ -70,21 +70,7 @@
 		$scope.data = {};
 		$scope.loading = false;
 
-		$scope.changeSeriesType = function(seriesType){
-			$scope.seriesType = seriesType;
-		}
-
 		var init = function(){
-			$scope.$watch('seriesType', function(){
-		    	$scope.updateData();
-		    });
-		};
-
-		$scope.updateData = function(){
-			var queues = [];
-
-			$scope.loading = true;
-
 			$http.get('/activities/' + $state.params.id)
 			.success(function(data, status){
 				$scope.activity = data;
@@ -92,14 +78,38 @@
 			.error(function(data, status){
 				Util.addAlert('Error!' + data.error, 'danger');
 			});
+			$scope.$watch('seriesType', function(){
+		    	updateData();
+		    });
+		    $scope.options = getOptions();
+		};
 
+		$scope.getActivities = function(per_page){
+			per_page = per_page ? per_page : constants.PER_PAGE;
+			var defer = $q.defer();
+			$http.get('/activities?page=' + $scope.page + '&per_page=' + per_page)
+			.success(function(activities){
+				$scope.activities = _.uniq(_.union($scope.activities, activities));
+				$scope.page++;
+				defer.resolve(activities.length < per_page);
+			})
+			.error(function(data, status){
+				Util.addAlert('Error!' + data.error, 'danger');
+				defer.reject();
+			});
+			return defer.promise;
+		};
+
+		var updateData = function(){
+			var queues = [];
+			$scope.loading = true;
 			$scope.types[$scope.seriesType].forEach(function(type){
 				queues.push(getStreams(type));
 			});
 			
 			return $q.all(queues).then(function(){
 				$scope.loading = false;
-				$scope.data = $scope.createData();
+				$scope.data = createData();
 				$scope.options = getOptions();
 			});
 		}
@@ -123,7 +133,7 @@
 			return options;
 		}
 
-		var getOption =  function(type, num){
+		var getOption = function(type, num){
 	        return {
 	            	chart: {
 	                type: 'lineChart',
@@ -171,9 +181,9 @@
 	        };
 	    };
 
-	    $scope.createData = function(){
+	    var createData = function(){
 			var editedData = {};
-			console.time('timer1');
+			// console.time('timer1');
 			$scope.types[$scope.seriesType].forEach(function(type){
 				var dataContainer = _.where($scope.streams[type], {type: type})[0]; 
 				if(!dataContainer) return editedData;
@@ -187,27 +197,11 @@
 					key: type,
 					values: values
 				}];
+				// console.log(values.length);
 			});
-			console.timeEnd('timer1');
+			// console.timeEnd('timer1');
 			return editedData;
 		};
-
-		$scope.getActivities = function(per_page){
-			per_page = per_page ? per_page : constants.PER_PAGE;
-			var defer = $q.defer();
-			$http.get('/activities?page=' + $scope.page + '&per_page=' + per_page)
-			.success(function(activities){
-				$scope.activities = _.uniq(_.union($scope.activities, activities));
-				$scope.page++;
-				defer.resolve(activities.length < per_page);
-			})
-			.error(function(data, status){
-				Util.addAlert('Error!' + data.error, 'danger');
-				defer.reject();
-			});
-			return defer.promise;
-		};
-		$scope.options = getOptions();
 
 		init();
 	}])

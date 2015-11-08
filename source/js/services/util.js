@@ -2,7 +2,7 @@
 	'use strict';
 
 	angular.module('StravaApp')
-	.factory('Util', function ($http, $rootScope) {
+	.factory('Util', ['$http', '$rootScope', function ($http, $rootScope) {
 		$rootScope.alerts = [];
 		return {
 			addAlert: function(msg, type) {
@@ -15,5 +15,5 @@
 		        $rootScope.alerts = [];
 		    }
 		}
-	});
+	}]);
 })();

@@ -13,6 +13,7 @@
 	    array.push(hours);
 	    minutes < 10 ? array.push('0' + minutes) : array.push(minutes);
 	    seconds < 10 ? array.push('0' + seconds) : array.push(seconds);
+	    if(isNaN(hours) || isNaN(minutes) || isNaN(seconds)) return '-- : -- : --';
 	    return array.join(' : ');
 	}
 	});
