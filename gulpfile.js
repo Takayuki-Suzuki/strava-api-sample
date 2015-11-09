@@ -7,7 +7,7 @@ var gulp 		= require("gulp"),
 
 gulp.task('default', ['serve', 'build', 'watch']);
 gulp.task('serve', ['browser-sync', 'watch']);
-gulp.task('build', ['build:css', 'build:js', 'build:views', 'build:fonts', 'build:images']);
+gulp.task('build', ['build:css', 'build:js', 'build:js:worker', 'build:views', 'build:fonts', 'build:images']);
 
 gulp.task('nodemon', function () {
     var called = false;
@@ -43,13 +43,14 @@ gulp.task('watch', function(){
   gulp.watch(['source/views/**', 'source/index.ejs'], ['build:views']);
   gulp.watch(['source/scss/**'], ['build:css']);
   gulp.watch(['source/js/**'], ['build:js']);
+  gulp.watch(['source/js/worker/**'], ['build:js:worker']);
   gulp.watch(['source/fonts/**'], ['build:fonts']);
   gulp.watch(['source/images/**'], ['build:images']);
 });
 
 gulp.task('build:css', function () {
 	var compileFileName = 'application.css'
-    gulp.src([path.src.scss, '!' + path.dest.css + compileFileName])
+    gulp.src([path.src.scss])
         .pipe($.plumber())
         .pipe($.sass())
         .pipe($.autoprefixer({
@@ -63,7 +64,16 @@ gulp.task('build:css', function () {
 
 gulp.task('build:js', function () {
 	var compileFileName = 'application.js'
-    gulp.src([path.src.js, '!' + path.dest.js + compileFileName])
+    gulp.src([path.src.js, '!' + path.src.worker])
+        .pipe($.plumber())
+        .pipe($.concat(compileFileName))
+        .pipe($.uglify())
+        .pipe(gulp.dest(path.dest.js));
+    reload();
+});
+gulp.task('build:js:worker', function () {
+    var compileFileName = 'worker.js'
+    gulp.src([path.src.worker])
         .pipe($.plumber())
         .pipe($.concat(compileFileName))
         .pipe($.uglify())

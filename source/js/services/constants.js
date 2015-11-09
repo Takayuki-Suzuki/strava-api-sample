@@ -8,7 +8,7 @@
 		return {
 			getConstants: function() {
 				var defer = $q.defer();
-				$http.get('/getSettings')
+				$http.get('/settings')
       			.success(function(constants){
       				// $rootScope.constants = _.extend(constants, staticConstants);
       				defer.resolve(_.extend(constants, staticConstants));

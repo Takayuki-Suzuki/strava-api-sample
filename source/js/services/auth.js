@@ -10,7 +10,7 @@
 	    	return !!currentUser && currentUser.hasOwnProperty('id');
 	    };
 		// currentUser.$promise = defer.promise;
-		$http.get('/getCurrentUser')
+		$http.get('/currentUser')
         .success(function(result) {
         	currentUser = result.data;
         	defer.resolve(currentUser);

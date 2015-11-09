@@ -30,13 +30,6 @@
 	        controller: 'LoginCtrl',
 	        noNeedForLoggedInUser: true
 		})
-		.state('login_callback', { 
-			parent: 'root',
-	        url: "/login_callback",
-	        templateUrl: 'views/top.html',
-	        controller: 'LoginCallbackCtrl',
-	        noNeedForLoggedInUser: true
-		})
 		.state('logout', { 
 			parent: 'root',
 	        url: "/logout",
@@ -53,7 +46,7 @@
 				activities: ['$http', 'Auth', 'constants', 'Util', function($http, Auth, constants, Util){
 					return $http.get('/activities?page=1&per_page=' + constants.PER_PAGE)
 					.error(function(data, status){
-						Util.addAlert('Error!' + data.error, 'danger');
+						//Util.addAlert('Error!' + data.error, 'danger');
 					});;
 				}]
 			}

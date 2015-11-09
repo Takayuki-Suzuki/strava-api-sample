@@ -54,11 +54,13 @@
 			}
 		};
 	}])
+
 	.controller('ShowActivitiesLayoutCtrl', ['$scope', '$state', function($scope, $state){
 		$scope.layout = {};
 		$scope.layout.params = $state.params;
 	}])
-	.controller('ShowActivitiesCtrl', ['$scope', '$http', '$state', '$q', '$filter', 'Util', 'activities', function($scope, $http, $state, $q, $filter, Util, activities){
+
+	.controller('ShowActivitiesCtrl', ['$scope', '$http', '$state', '$q', '$filter', 'Util', 'activities', 'Worker', function($scope, $http, $state, $q, $filter, Util, activities, Worker){
 		$scope.types = {
 			time: ['distance', 'altitude', 'heartrate', 'cadence', 'watts'],
 			distance: ['time', 'altitude', 'heartrate', 'cadence', 'watts']
@@ -70,6 +72,7 @@
 		$scope.data = {};
 		$scope.loading = false;
 
+		
 		var init = function(){
 			$http.get('/activities/' + $state.params.id)
 			.success(function(data, status){
@@ -82,6 +85,14 @@
 		    	updateData();
 		    });
 		    $scope.options = getOptions();
+
+		    // Workerが編集したデータを受け取る
+		    Worker.onmessage = function(e) {
+				$scope.loading = false;
+			 	$scope.data = e.data;
+			 	$scope.options = getOptions();
+			 	$scope.$apply();
+			};
 		};
 
 		$scope.getActivities = function(per_page){
@@ -100,6 +111,7 @@
 			return defer.promise;
 		};
 
+		
 		var updateData = function(){
 			var queues = [];
 			$scope.loading = true;
@@ -108,9 +120,14 @@
 			});
 			
 			return $q.all(queues).then(function(){
-				$scope.loading = false;
-				$scope.data = createData();
-				$scope.options = getOptions();
+				// Workerにデータを編集させる
+				Worker.postMessage(
+					{
+						types: $scope.types,
+						seriesType: $scope.seriesType,
+						streams: $scope.streams
+					}
+				);
 			});
 		}
 
@@ -151,12 +168,6 @@
 	                duration: 300,
 	                useInteractiveGuideline: true,
 	                clipVoronoi: false,
-	                // dispatch: {
-	                //     stateChange: function(e){ console.log("stateChange"); },
-	                //     changeState: function(e){ console.log("changeState"); },
-	                //     tooltipShow: function(e){ console.log("tooltipShow"); },
-	                //     tooltipHide: function(e){ console.log("tooltipHide"); }
-	                // },
 
 	                xAxis: {
 	                    axisLabel: $scope.seriesType,
@@ -180,28 +191,6 @@
 	            }
 	        };
 	    };
-
-	    var createData = function(){
-			var editedData = {};
-			// console.time('timer1');
-			$scope.types[$scope.seriesType].forEach(function(type){
-				var dataContainer = _.where($scope.streams[type], {type: type})[0]; 
-				if(!dataContainer) return editedData;
-				var seriesType = _.where($scope.streams[type], {type: $scope.seriesType})[0].data;
-				var dataArray = dataContainer.data;
-				var values = [];
-				_.each(dataArray, function(data, i){
-					values.push([seriesType[i], data]);
-				});
-				editedData[type] = [{
-					key: type,
-					values: values
-				}];
-				// console.log(values.length);
-			});
-			// console.timeEnd('timer1');
-			return editedData;
-		};
 
 		init();
 	}])

@@ -13,7 +13,8 @@ module.exports = {
         dir:  src,
         html: src + '/views/*.html',
         scss: src + '/scss/**/*.scss',
-        js:   src + '/js/**/*.js'
+        js:   src + '/js/**/*.js',
+        worker: src + '/js/worker/*.js'
     },
     dest: {
         dir:  dest,

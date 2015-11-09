@@ -4,9 +4,6 @@
 	.controller('LoginCtrl', ['$scope', '$http', 'constants', function($scope, $http, constants){
 		$scope.constants = constants;
 	}])
-	.controller('LoginCallbackCtrl', ['$scope', '$http', '$state', '$location', 'Auth', function($scope, $http, $state, $location, Auth){
-
-	}])
 	.controller('LogoutCtrl', ['$http', '$state', 'Auth', function($http, $state, Auth){
 		Auth.logout();
 		$http({

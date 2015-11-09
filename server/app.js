@@ -1,6 +1,10 @@
+const STRAVA_HOST = 'https://www.strava.com';
+const STRAVA_API_BASE = STRAVA_HOST + '/api/v3';
+
 var express = require('express'),
 	request = require('request'),
 	bodyParser = require('body-parser'),
+	methodOverride = require('method-override'),
 	cookieParser = require('cookie-parser'),
 	session = require('express-session'),
 	multer  = require('multer'),
@@ -14,33 +18,44 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/../public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride());
 app.use(session({
   secret: 'StravaApp',
   resave: false,
   saveUninitialized: false
 }));
+app.all('/athletes/*?', function(req, res, next){
+	res.contentType('json');
+	next();
+});
+app.all('/activities/*?', function(req, res, next){
+	res.contentType('json');
+	next();
+});
 
-app.get('/getSettings', function(req, res, next){
-	res.json({
+app.get('/settings', function(req, res, next){
+	res.contentType('json');
+	res.send({
 		REDIRECT_URI: process.env.REDIRECT_URI,
 		CLIENT_ID: process.env.CLIENT_ID,
 		// CLIENT_SECRET: process.env.CLIENT_SECRET, 
 		// ACCESS_TOKEN: process.env.ACCESS_TOKEN
 	})
 });
-app.get('/getCurrentUser', function(req, res, next){
+app.get('/currentUser', function(req, res, next){
 	// console.log(req.session.currentUser);
+	res.contentType('json');
 	if(req.session.currentUser){
 		res.status(200).json({
 			data: req.session.currentUser
 		});
 	} else {
-		res.status(200).json({data: null});
+		res.status(200).send({data: null});
 	}
 });
-app.get('/login_callback', function(req, res, next){
+app.get('/authCallback', function(req, res, next){
 	var options = {
-		uri: 'https://www.strava.com/oauth/token',
+		uri: STRAVA_HOST + '/oauth/token',
 		form: { 
 			client_id: process.env.CLIENT_ID,
 			client_secret: process.env.CLIENT_SECRET,
@@ -58,14 +73,12 @@ app.get('/login_callback', function(req, res, next){
 			// TODO エラー処理
 			console.log('error: '+ response.statusCode);
 		}
-		res.redirect('/#/login_callback');
-    	// return;
-		// res.render('index.ejs', { root: __dirname + '/../public', currentUser: req.session.currentUser });
+		res.redirect('/');
 	});
 });
 app.post('/logout', function(req, res, next){
 	var options = {
-		uri: 'https://www.strava.com/oauth/deauthorize',
+		uri: STRAVA_HOST + '/oauth/deauthorize',
 		headers: {
 			'Authorization': 'Bearer ' + req.session.access_token
 		}
@@ -80,14 +93,15 @@ app.post('/logout', function(req, res, next){
 			// TODO エラー処理
 			console.log('error: '+ response.statusCode);
 		}
+		res.contentType('json');
 		res.status(response.statusCode)
-		.json(JSON.parse(response.body));
+		.send(JSON.parse(response.body));
 	});
 });
 app.get('/athletes', function(req, res, next){
 	// console.log(req.session.currentUser);
 	var options = {
-		uri: 'https://www.strava.com/api/v3/athletes/' + req.session.currentUser.id,
+		uri: STRAVA_API_BASE + '/athletes/' + req.session.currentUser.id,
 		headers: {
 			'Authorization': 'Bearer ' + req.session.access_token
 		}
@@ -97,12 +111,12 @@ app.get('/athletes', function(req, res, next){
 		// 	response.statusCode = 200
 		// }
 		res.status(response.statusCode)
-		.json(JSON.parse(body));
+		.send(JSON.parse(body));
 	});
 });
 app.get('/activities', function(req, res, next){
 	var options = {
-		uri: 'https://www.strava.com/api/v3/athlete/activities',
+		uri: STRAVA_API_BASE + '/athlete/activities',
 		form: {
 			page: req.query.page,
 			per_page: req.query.per_page
@@ -113,49 +127,49 @@ app.get('/activities', function(req, res, next){
 	};
 	request.get(options, function(error, response, body){
 		res.status(response.statusCode)
-		.json(JSON.parse(response.body));
+		.send(JSON.parse(response.body));
 	});
 });
 app.get('/activities/:id', function(req, res, next){
 	var options = {
-		uri: 'https://www.strava.com/api/v3/activities/' + req.params.id,
+		uri: STRAVA_API_BASE + '/activities/' + req.params.id,
 		headers: {
 			'Authorization': 'Bearer ' + req.session.access_token
 		}
 	};
 	request.get(options, function(error, response, body){
 		res.status(response.statusCode)
-		.json(JSON.parse(response.body));
+		.send(JSON.parse(response.body));
 	});
 });
 app.get('/activities/:id/zones', function(req, res, next){
 	var options = {
-		uri: 'https://www.strava.com/api/v3/activities/' + req.params.id + '/zones',
+		uri: STRAVA_API_BASE + '/activities/' + req.params.id + '/zones',
 		headers: {
 			'Authorization': 'Bearer ' + req.session.access_token
 		}
 	};
 	request.get(options, function(error, response, body){
 		res.status(response.statusCode)
-		.json(JSON.parse(response.body));
+		.send(JSON.parse(response.body));
 	});
 });
 app.get('/activities/:id/laps', function(req, res, next){
 	var options = {
-		uri: 'https://www.strava.com/api/v3/activities/' + req.params.id + '/laps',
+		uri: STRAVA_API_BASE + '/activities/' + req.params.id + '/laps',
 		headers: {
 			'Authorization': 'Bearer ' + req.session.access_token
 		}
 	};
 	request.get(options, function(error, response, body){
 		res.status(response.statusCode)
-		.json(JSON.parse(response.body));
+		.send(JSON.parse(response.body));
 	});
 });
 app.get('/activities/:id/streams/:type', function(req, res, next){
 	var seriesType = req.query.seriesType ? req.query.seriesType : 'time';
 	var options = {
-		uri: 'https://www.strava.com/api/v3/activities/' + req.params.id + '/streams/' + req.params.type,
+		uri: STRAVA_API_BASE + '/activities/' + req.params.id + '/streams/' + req.params.type,
 		form: {
 			resolution: 'medium',
 			series_type: seriesType
@@ -166,12 +180,12 @@ app.get('/activities/:id/streams/:type', function(req, res, next){
 	};
 	request.get(options, function(error, response, body){
 		res.status(response.statusCode)
-		.json(JSON.parse(response.body));
+		.send(JSON.parse(response.body));
 	});
 });
 app.post('/uploads', upload.fields([{name: 'fit'}, {name: 'activity_type'}]), function(req, res, next){
 	var options = {
-		uri: 'https://www.strava.com/api/v3/uploads',
+		uri: STRAVA_API_BASE + '/uploads',
 		headers: {
 			'Authorization': 'Bearer ' + req.session.access_token
 		},
@@ -191,8 +205,9 @@ app.post('/uploads', upload.fields([{name: 'fit'}, {name: 'activity_type'}]), fu
 		fs.unlink(req.files.fit[0].path, function (err) {
 			if (err) throw err;
 		});
+		res.contentType('json');
 		res.status(response.statusCode)
-		.json(JSON.parse(response.body));
+		.send(JSON.parse(response.body));
 	});
 });
 app.all('/*', function(req, res, next) {
