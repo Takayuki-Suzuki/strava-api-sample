@@ -4,7 +4,6 @@ const STRAVA_API_BASE = STRAVA_HOST + '/api/v3';
 var express = require('express'),
 	request = require('request'),
 	bodyParser = require('body-parser'),
-	methodOverride = require('method-override'),
 	cookieParser = require('cookie-parser'),
 	session = require('express-session'),
 	multer  = require('multer'),
@@ -18,7 +17,6 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/../public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(methodOverride());
 app.use(session({
   secret: 'StravaApp',
   resave: false,
@@ -183,7 +181,7 @@ app.get('/activities/:id/streams/:type', function(req, res, next){
 		.send(JSON.parse(response.body));
 	});
 });
-app.post('/uploads', upload.fields([{name: 'fit'}, {name: 'activity_type'}]), function(req, res, next){
+app.post('/uploads', upload.fields([{name: 'fit'}]), function(req, res, next){
 	var options = {
 		uri: STRAVA_API_BASE + '/uploads',
 		headers: {

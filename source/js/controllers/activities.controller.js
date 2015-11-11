@@ -72,6 +72,22 @@
 		$scope.data = {};
 		$scope.loading = false;
 
+		$scope.getActivities = function(per_page){
+			per_page = per_page ? per_page : constants.PER_PAGE;
+			var defer = $q.defer();
+			$http.get('/activities?page=' + $scope.page + '&per_page=' + per_page)
+			.success(function(activities){
+				$scope.activities = _.uniq(_.union($scope.activities, activities));
+				$scope.page++;
+				defer.resolve(activities.length < per_page);
+			})
+			.error(function(data, status){
+				Util.addAlert('Error!' + data.error, 'danger');
+				defer.reject();
+			});
+			return defer.promise;
+		};
+
 		
 		var init = function(){
 			$http.get('/activities/' + $state.params.id)
@@ -94,23 +110,6 @@
 			 	$scope.$apply();
 			};
 		};
-
-		$scope.getActivities = function(per_page){
-			per_page = per_page ? per_page : constants.PER_PAGE;
-			var defer = $q.defer();
-			$http.get('/activities?page=' + $scope.page + '&per_page=' + per_page)
-			.success(function(activities){
-				$scope.activities = _.uniq(_.union($scope.activities, activities));
-				$scope.page++;
-				defer.resolve(activities.length < per_page);
-			})
-			.error(function(data, status){
-				Util.addAlert('Error!' + data.error, 'danger');
-				defer.reject();
-			});
-			return defer.promise;
-		};
-
 		
 		var updateData = function(){
 			var queues = [];

@@ -3,7 +3,6 @@
 
 	angular.module('StravaApp', [
 	  'ngCookies',
-	  'ngResource',
 	  'ui.router',
 	  'ui.bootstrap',
 	  'nvd3',
