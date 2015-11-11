@@ -1,6 +1,5 @@
 var gulp 		= require("gulp"),
     path        = require('./path-info'),
-    settings    = require('./settings'),
     browserSync = require('browser-sync').create(),
     reload      = browserSync.reload,
     $           = require('gulp-load-plugins')();
@@ -10,6 +9,7 @@ gulp.task('serve', ['browser-sync', 'watch']);
 gulp.task('build', ['build:css', 'build:js', 'build:js:worker', 'build:views', 'build:fonts', 'build:images']);
 
 gulp.task('nodemon', function () {
+    var settings    = require('./settings');
     var called = false;
     $.nodemon({
         script: './server/app.js',
