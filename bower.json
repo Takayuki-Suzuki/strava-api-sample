@@ -9,7 +9,6 @@
     "angular-breadcrumb": "~0.4.1",
     "angular-nvd3": "~1.0.3",
     "lodash": "~3.10.1",
-    "jquery-ui": "~1.11.4",
     "bootstrap": "~3.3.2",
     "font-awesome": "~4.4.0"
   },
