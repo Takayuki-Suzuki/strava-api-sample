@@ -42,9 +42,10 @@
 			controller: 'TopCtrl',
 			requireLogin: true,
 			resolve: {
-				activities: ['$http', 'Auth', 'constants', 'Util', function($http, Auth, constants, Util){
+				activities: ['$http', '$state', 'Auth', 'constants', 'Util', function($http, $state, Auth, constants, Util){
 					return $http.get('/activities?page=1&per_page=' + constants.PER_PAGE)
 					.error(function(data, status){
+						$state.go('logout', {}, {reload: true})
 						//Util.addAlert('Error!' + data.error, 'danger');
 					});;
 				}]
