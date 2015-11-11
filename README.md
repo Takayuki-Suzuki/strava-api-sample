@@ -1,7 +1,6 @@
-# 鈴木貴之Assignment README
+# Strava API SPA
 
-## サンプルアプリ
-http://tsdr-strava.herokuapp.com/
+
 
 ## Configuration
 
@@ -18,6 +17,8 @@ npm install
 gulp
 ```
 
+## Sample
+http://tsdr-strava.herokuapp.com/
 
 
 
